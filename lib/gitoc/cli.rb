@@ -39,6 +39,12 @@ class Gitoc::Cli < Thor
     repositories.each_with_index do |repo, index|
       puts
       say "~/#{repo.path.relative_path_from(home)} (#{index+1}/#{repositories.count})", :cyan
+
+      if repo.url.nil? || repo.url.empty?
+        say "Skip repository with no remote.origin.url", :red
+        next
+      end
+
       repo.clone
     end
   end
