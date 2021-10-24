@@ -1,6 +1,5 @@
 require "open3"
 require "pathname"
-require "yaml"
 
 class Gitoc::Repository
 
