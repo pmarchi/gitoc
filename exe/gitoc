@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require "gitoc"
+
+Gitoc::Cli.start ARGV
