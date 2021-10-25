@@ -63,6 +63,20 @@ class Gitoc::Cli < Thor
     end
   end
 
+  desc "clone-or-pull TOC-FILE", "Read TOC and clone/pull all repositories"
+  def clone_or_pull toc
+    init_base
+    repositories = load_toc! toc
+
+    each_repository(repositories) do |repo|
+      if repo.exist?
+        repo.pull
+      else
+        repo.clone
+      end
+    end
+  end
+
   private
 
   def init_base
