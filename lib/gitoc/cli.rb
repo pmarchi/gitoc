@@ -39,8 +39,7 @@ class Gitoc::Cli < Thor
     repositories = load_toc! toc
 
     repositories.each_with_index do |repo, index|
-      puts
-      say "~/#{repo.path.relative_path_from(home)} (#{index+1}/#{repositories.count})", :cyan
+      print_repository_label repo, index, repositories.count
 
       if repo.path.exist?
         say "Skip repository, #{repo.path} already exist.", :red
@@ -71,6 +70,11 @@ class Gitoc::Cli < Thor
     YAML.load_file(toc).map do |attributes|
       Gitoc::Repository.load attributes
     end
+  end
+
+  def print_repository_label repo, count, total
+    puts
+    say "~/#{repo.path.relative_path_from(home)} (#{count+1}/#{total})", :cyan
   end
 
   def home
