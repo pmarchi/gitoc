@@ -55,6 +55,28 @@ class Gitoc::Cli < Thor
     end
   end
 
+  desc "pull TOC-FILE", "Read TOC and pull all repository"
+  def pull toc
+    init_base
+    repositories = load_toc! toc
+
+    repositories.each_with_index do |repo, index|
+      print_repository_label repo, index, repositories.count
+
+      unless repo.path.exist?
+        say "Skip repository, #{repo.path} doesn't exist.", :red
+        next
+      end
+
+      unless repo.url?
+        say "Skip repository with no remote.origin.url", :red
+        next
+      end
+   
+      repo.pull
+    end
+  end
+
   private
 
   def init_base

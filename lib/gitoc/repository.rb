@@ -43,6 +43,11 @@ class Gitoc::Repository
     run_in path.parent, "git clone #{url}"
   end
 
+  def pull
+    return unless path.exist?
+    run_in path, "git pull"
+  end
+
   def run_in path, cmd
     Dir.chdir path do
       Open3.capture2 cmd
