@@ -6,11 +6,11 @@ class Gitoc::Cli < Thor
   include Thor::Actions
 
   class_option :base, default: "~/git", desc: "Local git base directory"
+  class_option :toc, default: "~/.gitoc.yaml", desc: "GiTOC file"
 
-  desc "check TOC-FILE", "Check TOC-FILE"
-  def check toc
+  desc "check", "Check GiTOC file"
+  def check
     init_base
-    repositories = load_toc! toc
 
     list = repositories.map do |repo|
       path, url = repo.to_hash.values
@@ -21,24 +21,24 @@ class Gitoc::Cli < Thor
     print_table list
   end
 
-  desc "dump TOC-FILE", "Dump git repository metadata into a TOC"
-  def dump toc
+  desc "dump", "Recursively scan base for git repositories and generate GiTOC file"
+  def dump
     init_base
 
-    repositories = Gitoc::Repository.base.glob("**/.git").map do |git_dir|
+    toc = Gitoc::Repository.base.glob("**/.git").map do |git_dir|
       Gitoc::Repository.new(git_dir.parent)
-    end.sort_by(&:path)
+    end.sort_by(&:path).map(&:to_hash)
 
     # Write git_toc file
-    File.write toc, repositories.map(&:to_hash).to_yaml
+    gitoc.write toc.to_yaml
+    puts "Write #{gitoc}"
   end
 
-  desc "clone TOC-FILE", "Read TOC and clone all repositories"
-  def clone toc
+  desc "clone", "Read GiTOC file and clone all repositories"
+  def clone
     init_base
-    repositories = load_toc! toc
 
-    each_repository(repositories) do |repo|
+    each_repository do |repo|
       if repo.exist?
         say "Skip repository, #{repo.path} already exists.", :red
         next
@@ -48,12 +48,11 @@ class Gitoc::Cli < Thor
     end
   end
 
-  desc "pull TOC-FILE", "Read TOC and pull all repositories"
-  def pull toc
+  desc "pull", "Read GiTOC file and pull all repositories"
+  def pull
     init_base
-    repositories = load_toc! toc
 
-    each_repository(repositories) do |repo|
+    each_repository do |repo|
       unless repo.exist?
         say "Skip repository, #{repo.path} doesn't exist.", :red
         next
@@ -63,12 +62,11 @@ class Gitoc::Cli < Thor
     end
   end
 
-  desc "clone-or-pull TOC-FILE", "Read TOC and clone/pull all repositories"
-  def clone_or_pull toc
+  desc "clone-or-pull", "Read GiTOC file and clone/pull all repositories"
+  def clone_or_pull
     init_base
-    repositories = load_toc! toc
 
-    each_repository(repositories) do |repo|
+    each_repository do |repo|
       if repo.exist?
         repo.pull
       else
@@ -83,18 +81,24 @@ class Gitoc::Cli < Thor
     Gitoc::Repository.base = Pathname.new(options[:base]).expand_path
   end
 
-  def load_toc! toc
-    unless File.exist? toc
-      say "#{toc} not found", :red
-      exit 1
-    end
+  def gitoc
+    @gitoc ||= Pathname.new(options[:toc]).expand_path
+  end
 
-    YAML.load_file(toc).map do |attributes|
-      Gitoc::Repository.load attributes
+  def repositories
+    @repositories ||= begin
+      unless gitoc.exist?
+        say "#{gitoc} not found", :red
+        exit 1
+      end
+
+      YAML.load_file(gitoc).map do |attributes|
+        Gitoc::Repository.load attributes
+      end
     end
   end
 
-  def each_repository repositories
+  def each_repository
     repositories.each_with_index do |repo, index|
       puts
       say "~/#{repo.path.relative_path_from(home)} (#{index + 1}/#{repositories.count})", :cyan
