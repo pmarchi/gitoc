@@ -26,6 +26,10 @@ class Gitoc::Repository
     }
   end
 
+  def url?
+    ! (url.nil? || url.empty?)
+  end
+
   def url
     @url ||= begin
       out, _status = run_in path, "git config remote.origin.url"
