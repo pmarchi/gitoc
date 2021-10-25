@@ -42,7 +42,7 @@ class Gitoc::Cli < Thor
       print_repository_label repo, index, repositories.count
 
       if repo.path.exist?
-        say "Skip repository, #{repo.path} already exist.", :red
+        say "Skip repository, #{repo.path} already exists.", :red
         next
       end
 
