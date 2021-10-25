@@ -2,7 +2,6 @@ require "open3"
 require "pathname"
 
 class Gitoc::Repository
-
   class << self
     attr_accessor :base
 
@@ -10,11 +9,11 @@ class Gitoc::Repository
       new base.join(attribute[:path]), attribute[:url]
     end
   end
-  
+
   # Path to the git repository
   attr_reader :path
 
-  def initialize path, url=nil
+  def initialize path, url = nil
     @path = Pathname.new(path).expand_path
     @url = url
   end
@@ -22,12 +21,12 @@ class Gitoc::Repository
   def to_hash
     {
       path: path.relative_path_from(self.class.base).to_s,
-      url: url,
+      url: url
     }
   end
 
   def url?
-    ! (url.nil? || url.empty?)
+    !(url.nil? || url.empty?)
   end
 
   def url

@@ -3,14 +3,14 @@
 require_relative "lib/gitoc/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "gitoc"
-  spec.version       = Gitoc::VERSION
-  spec.authors       = ["Patrick Marchi"]
-  spec.email         = ["patrick.marchi@geo.uzh.ch"]
+  spec.name = "gitoc"
+  spec.version = Gitoc::VERSION
+  spec.authors = ["Patrick Marchi"]
+  spec.email = ["patrick.marchi@geo.uzh.ch"]
 
-  spec.summary       = [spec.name, spec.version].join(" ")
-  spec.description   = "Manage git repositories"
-  spec.homepage      = "https://github.com/pmarchi/gitoc"
+  spec.summary = [spec.name, spec.version].join(" ")
+  spec.description = "Manage git repositories"
+  spec.homepage = "https://github.com/pmarchi/gitoc"
   spec.required_ruby_version = ">= 2.4.0"
 
   spec.metadata["allowed_push_host"] = "gems.patrickmarchi.ch"
@@ -24,8 +24,8 @@ Gem::Specification.new do |spec|
   spec.files = Dir.chdir(File.expand_path(__dir__)) do
     `git ls-files -z`.split("\x0").reject { |f| f.match(%r{\A(?:test|spec|features)/}) }
   end
-  spec.bindir        = "exe"
-  spec.executables   = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
+  spec.bindir = "exe"
+  spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
   # Uncomment to register a new dependency of your gem

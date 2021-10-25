@@ -50,7 +50,7 @@ class Gitoc::Cli < Thor
         say "Skip repository with no remote.origin.url", :red
         next
       end
-   
+
       repo.clone
     end
   end
@@ -72,7 +72,7 @@ class Gitoc::Cli < Thor
         say "Skip repository with no remote.origin.url", :red
         next
       end
-   
+
       repo.pull
     end
   end
@@ -96,7 +96,7 @@ class Gitoc::Cli < Thor
 
   def print_repository_label repo, count, total
     puts
-    say "~/#{repo.path.relative_path_from(home)} (#{count+1}/#{total})", :cyan
+    say "~/#{repo.path.relative_path_from(home)} (#{count + 1}/#{total})", :cyan
   end
 
   def home
