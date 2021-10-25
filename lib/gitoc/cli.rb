@@ -33,7 +33,7 @@ class Gitoc::Cli < Thor
     File.write toc, repositories.map(&:to_hash).to_yaml
   end
 
-  desc "clone TOC-FILE", "Read TOC and clone all repository"
+  desc "clone TOC-FILE", "Read TOC and clone all repositories"
   def clone toc
     init_base
     repositories = load_toc! toc
@@ -55,7 +55,7 @@ class Gitoc::Cli < Thor
     end
   end
 
-  desc "pull TOC-FILE", "Read TOC and pull all repository"
+  desc "pull TOC-FILE", "Read TOC and pull all repositories"
   def pull toc
     init_base
     repositories = load_toc! toc
