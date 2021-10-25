@@ -7,18 +7,22 @@ class Gitoc::Cli < Thor
 
   class_option :base, default: "~/git", desc: "Local git base directory"
 
-  desc "check", "Check TOC"
-  def check
-    list = YAML.load_file(backup).map do |attribute|
-      path = (attribute[:url].nil? || attribute[:url].empty?) ? set_color(attribute[:path], :red) : attribute[:path]
-      [path, attribute[:url].to_s]
+  desc "check TOC-FILE", "Check TOC-FILE"
+  def check toc
+    init_base
+    repositories = load_toc! toc
+
+    list = repositories.map do |repo|
+      path, url = repo.to_hash.values
+      path = set_color(path, :red) if url.nil? || url.empty?
+      [path, url]
     end
 
     print_table list
   end
 
-  desc "dump", "Dump git repository metadata into a TOC"
-  def dump
+  desc "dump TOC-FILE", "Dump git repository metadata into a TOC"
+  def dump toc
     init_base
 
     repositories = Gitoc::Repository.base.glob("**/.git").map do |git_dir|
@@ -26,16 +30,13 @@ class Gitoc::Cli < Thor
     end.sort_by(&:path)
 
     # Write git_toc file
-    backup.write repositories.map(&:to_hash).to_yaml
+    File.write toc, repositories.map(&:to_hash).to_yaml
   end
 
-  desc "clone", "Fetch TOC and clone all repository"
-  def clone
+  desc "clone TOC-FILE", "Fetch TOC and clone all repository"
+  def clone toc
     init_base
-
-    repositories = YAML.load_file(backup).map do |attributes|
-      Gitoc::Repository.load attributes
-    end
+    repositories = load_toc! toc
 
     repositories.each_with_index do |repo, index|
       puts
@@ -55,8 +56,15 @@ class Gitoc::Cli < Thor
     Gitoc::Repository.base = Pathname.new(options[:base]).expand_path
   end
 
-  def backup
-    @backup ||= Pathname.new("~/Dropbox/settings/git_toc.yaml").expand_path
+  def load_toc! toc
+    unless File.exist? toc
+      say "#{toc} not found", :red
+      exit 1
+    end
+
+    YAML.load_file(toc).map do |attributes|
+      Gitoc::Repository.load attributes
+    end
   end
 
   def home
