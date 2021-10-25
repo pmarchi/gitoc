@@ -7,10 +7,11 @@ class Gitoc::Cli < Thor
 
   class_option :base, default: "~/git", desc: "Local git base directory"
 
-  desc "list", "List TOC"
-  def list
+  desc "check", "Check TOC"
+  def check
     list = YAML.load_file(backup).map do |attribute|
-      [attribute[:path], attribute[:url].to_s]
+      path = (attribute[:url].nil? || attribute[:url].empty?) ? set_color(attribute[:path], :red) : attribute[:path]
+      [path, attribute[:url].to_s]
     end
 
     print_table list
