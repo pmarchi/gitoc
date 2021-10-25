@@ -33,7 +33,7 @@ class Gitoc::Cli < Thor
     File.write toc, repositories.map(&:to_hash).to_yaml
   end
 
-  desc "clone TOC-FILE", "Fetch TOC and clone all repository"
+  desc "clone TOC-FILE", "Read TOC and clone all repository"
   def clone toc
     init_base
     repositories = load_toc! toc
@@ -42,11 +42,17 @@ class Gitoc::Cli < Thor
       puts
       say "~/#{repo.path.relative_path_from(home)} (#{index+1}/#{repositories.count})", :cyan
 
-      if repo.url?
-        repo.clone
-      else
-        say "Skip repository with no remote.origin.url", :red
+      if repo.path.exist?
+        say "Skip repository, #{repo.path} already exist.", :red
+        next
       end
+
+      unless repo.url?
+        say "Skip repository with no remote.origin.url", :red
+        next
+      end
+   
+      repo.clone
     end
   end
 
