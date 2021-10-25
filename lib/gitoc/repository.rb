@@ -25,6 +25,10 @@ class Gitoc::Repository
     }
   end
 
+  def exist?
+    path.exist?
+  end
+
   def url?
     !(url.nil? || url.empty?)
   end
@@ -37,13 +41,13 @@ class Gitoc::Repository
   end
 
   def clone
-    return unless url
+    return unless url?
     path.parent.mkpath
     run_in path.parent, "git clone #{url}"
   end
 
   def pull
-    return unless path.exist?
+    return unless exist?
     run_in path, "git pull"
   end
 

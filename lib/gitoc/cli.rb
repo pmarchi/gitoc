@@ -41,7 +41,7 @@ class Gitoc::Cli < Thor
     repositories.each_with_index do |repo, index|
       print_repository_label repo, index, repositories.count
 
-      if repo.path.exist?
+      if repo.exist?
         say "Skip repository, #{repo.path} already exists.", :red
         next
       end
@@ -63,7 +63,7 @@ class Gitoc::Cli < Thor
     repositories.each_with_index do |repo, index|
       print_repository_label repo, index, repositories.count
 
-      unless repo.path.exist?
+      unless repo.exist?
         say "Skip repository, #{repo.path} doesn't exist.", :red
         next
       end
