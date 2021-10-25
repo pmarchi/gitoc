@@ -27,7 +27,7 @@ class Gitoc::Repository
   end
 
   def url?
-    ! (url.nil? || url.empty?)
+    ! (url.nil? || url.empty?)
   end
 
   def url
