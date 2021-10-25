@@ -38,16 +38,9 @@ class Gitoc::Cli < Thor
     init_base
     repositories = load_toc! toc
 
-    repositories.each_with_index do |repo, index|
-      print_repository_label repo, index, repositories.count
-
+    each_repository(repositories) do |repo|
       if repo.exist?
         say "Skip repository, #{repo.path} already exists.", :red
-        next
-      end
-
-      unless repo.url?
-        say "Skip repository with no remote.origin.url", :red
         next
       end
 
@@ -60,16 +53,9 @@ class Gitoc::Cli < Thor
     init_base
     repositories = load_toc! toc
 
-    repositories.each_with_index do |repo, index|
-      print_repository_label repo, index, repositories.count
-
+    each_repository(repositories) do |repo|
       unless repo.exist?
         say "Skip repository, #{repo.path} doesn't exist.", :red
-        next
-      end
-
-      unless repo.url?
-        say "Skip repository with no remote.origin.url", :red
         next
       end
 
@@ -94,11 +80,20 @@ class Gitoc::Cli < Thor
     end
   end
 
-  def print_repository_label repo, count, total
-    puts
-    say "~/#{repo.path.relative_path_from(home)} (#{count + 1}/#{total})", :cyan
-  end
+  def each_repository repositories
+    repositories.each_with_index do |repo, index|
+      puts
+      say "~/#{repo.path.relative_path_from(home)} (#{index + 1}/#{repositories.count})", :cyan
 
+      unless repo.url?
+        say "Skip repository with no remote.origin.url", :red
+        next
+      end
+
+      yield repo
+    end
+  end
+      
   def home
     @home ||= Pathname.new(ENV["HOME"])
   end
