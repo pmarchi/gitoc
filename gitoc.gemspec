@@ -6,18 +6,19 @@ Gem::Specification.new do |spec|
   spec.name = "gitoc"
   spec.version = Gitoc::VERSION
   spec.authors = ["Patrick Marchi"]
-  spec.email = ["patrick.marchi@geo.uzh.ch"]
+  spec.email = ["mail@patrickmarchi.ch"]
 
   spec.summary = [spec.name, spec.version].join(" ")
-  spec.description = "Manage git repositories"
+  spec.description = "Manage git repositories in directory tree."
   spec.homepage = "https://github.com/pmarchi/gitoc"
+  spec.license = "MIT"
   spec.required_ruby_version = ">= 2.4.0"
 
-  spec.metadata["allowed_push_host"] = "gems.patrickmarchi.ch"
+  spec.metadata["allowed_push_host"] = "https://rubygems.org"
 
   spec.metadata["homepage_uri"] = spec.homepage
-  # spec.metadata["source_code_uri"] = "TODO: Put your gem's public repo URL here."
-  # spec.metadata["changelog_uri"] = "TODO: Put your gem's CHANGELOG.md URL here."
+  spec.metadata["source_code_uri"] = spec.homepage
+  spec.metadata["changelog_uri"] = File.join(spec.homepage, "blob/main/CHANGELOG.md")
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
