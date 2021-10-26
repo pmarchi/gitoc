@@ -1,3 +1,5 @@
+[![Gem Version](https://badge.fury.io/rb/gitoc.svg)](https://badge.fury.io/rb/gitoc)
+
 # Gitoc
 
 GiTOC generates a table of contents from a local directory tree of git repositories. Use this GiTOC file to clone all your git repositories to a new location (computer) or run a command on all your repositories.
