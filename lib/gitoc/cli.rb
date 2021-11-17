@@ -8,17 +8,38 @@ class Gitoc::Cli < Thor
   class_option :base, default: "~/git", desc: "Local git base directory"
   class_option :toc, default: "~/.gitoc.yaml", desc: "GiTOC file"
 
-  desc "check", "Check GiTOC file"
+  desc "check", "Check local repositories and GiTOC file"
   def check
     init_base
 
-    list = repositories.map do |repo|
-      path, url = repo.to_hash.values
-      path = set_color(path, :red) if url.nil? || url.empty?
-      [path, url]
+    # Get all repositories from the filesystem
+    # and tag them with :fs
+    repositories = repositories_fs.map do |repository_fs|
+      [repository_fs, [:fs]]
     end
 
-    print_table list
+    # Add missing repositories from the GiTOC file
+    # and tag all repositories from the GiTOC file with :toc
+    repositories_gitoc.each do |repository_gitoc|
+      _, tags = repositories.find {|repository_fs, _| repository_fs == repository_gitoc }
+      if tags
+        tags << :toc
+      else
+        repositories << [repository_gitoc, [:toc]]
+      end
+    end
+
+    # Sort repositories list
+    # and build table rows: [path, url, comment]
+    rows = repositories.sort_by {|repository, _| repository.rel_path }.map do |repository, tags|
+      path, url = repository.to_hash.values
+      url = "-" if url.nil? || url.empty?
+      comment = tags.include?(:fs) && tags.include?(:toc) ? "" : {fs: "not in GiTOC", toc: "not on filesystem"}[tags.first]
+
+      [path, url, comment]
+    end
+
+    print_table rows  
   end
 
   desc "generate", "Recursively scan base for git repositories and generate/update GiTOC file"
@@ -83,8 +104,8 @@ class Gitoc::Cli < Thor
     @gitoc ||= Pathname.new(options[:toc]).expand_path
   end
 
-  def repositories
-    @repositories ||= begin
+  def repositories_gitoc
+    @repositories_gitoc ||= begin
       unless gitoc.exist?
         say "#{gitoc} not found", :red
         exit 1
@@ -103,9 +124,9 @@ class Gitoc::Cli < Thor
   end
 
   def each_repository
-    repositories.each_with_index do |repo, index|
+    repositories_gitoc.each_with_index do |repo, index|
       puts
-      say "~/#{repo.path.relative_path_from(home)} (#{index + 1}/#{repositories.count})", :cyan
+      say "~/#{repo.path.relative_path_from(home)} (#{index + 1}/#{repositories_gitoc.count})", :cyan
 
       unless repo.url?
         say "Skip repository with no remote.origin.url", :red
