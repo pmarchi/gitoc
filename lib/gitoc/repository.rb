@@ -18,9 +18,17 @@ class Gitoc::Repository
     @url = url
   end
 
+  def == other
+    self.to_hash == other.to_hash
+  end
+
+  def rel_path
+    @rel_path ||= path.relative_path_from(self.class.base)
+  end
+
   def to_hash
     {
-      path: path.relative_path_from(self.class.base).to_s,
+      path: rel_path.to_s,
       url: url
     }
   end
