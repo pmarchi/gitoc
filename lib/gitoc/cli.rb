@@ -40,7 +40,7 @@ class Gitoc::Cli < Thor
 
     each_repository do |repo|
       if repo.exist?
-        say "Skip repository, #{repo.path} already exists.", :red
+        puts "Skip repository, #{repo.path} already exists."
         next
       end
 
@@ -54,7 +54,7 @@ class Gitoc::Cli < Thor
 
     each_repository do |repo|
       unless repo.exist?
-        say "Skip repository, #{repo.path} doesn't exist.", :red
+        puts "Skip repository, #{repo.path} doesn't exist."
         next
       end
 
