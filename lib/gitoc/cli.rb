@@ -21,8 +21,8 @@ class Gitoc::Cli < Thor
     print_table list
   end
 
-  desc "dump", "Recursively scan base for git repositories and generate GiTOC file"
-  def dump
+  desc "generate", "Recursively scan base for git repositories and generate/update GiTOC file"
+  def generate
     init_base
 
     toc = repositories_fs.map(&:to_hash)
