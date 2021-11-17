@@ -14,7 +14,7 @@ The local directory tree of your git repositories defaults to `~/git` and the de
 
 First you have to generate a GiTOC file with
 
-    $ gitoc dump
+    $ gitoc generate
 
 Then you can run things on your local repositories
 
