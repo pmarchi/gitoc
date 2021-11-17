@@ -25,9 +25,7 @@ class Gitoc::Cli < Thor
   def dump
     init_base
 
-    toc = Gitoc::Repository.base.glob("**/.git").map do |git_dir|
-      Gitoc::Repository.new(git_dir.parent)
-    end.sort_by(&:path).map(&:to_hash)
+    toc = repositories_fs.map(&:to_hash)
 
     # Write git_toc file
     gitoc.write toc.to_yaml
@@ -96,6 +94,12 @@ class Gitoc::Cli < Thor
         Gitoc::Repository.load attributes
       end
     end
+  end
+
+  def repositories_fs
+    @repositories_fs ||= Gitoc::Repository.base.glob("**/.git").map do |git_dir|
+      Gitoc::Repository.new(git_dir.parent)
+    end.sort_by(&:path)
   end
 
   def each_repository
