@@ -19,7 +19,7 @@ class Gitoc::Repository
   end
 
   def == other
-    self.to_hash == other.to_hash
+    to_hash == other.to_hash
   end
 
   def rel_path

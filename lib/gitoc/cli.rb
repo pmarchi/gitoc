@@ -21,7 +21,7 @@ class Gitoc::Cli < Thor
     # Add missing repositories from the GiTOC file
     # and tag all repositories from the GiTOC file with :toc
     repositories_gitoc.each do |repository_gitoc|
-      _, tags = repositories.find {|repository_fs, _| repository_fs == repository_gitoc }
+      _, tags = repositories.find { |repository_fs, _| repository_fs == repository_gitoc }
       if tags
         tags << :toc
       else
@@ -31,7 +31,7 @@ class Gitoc::Cli < Thor
 
     # Sort repositories list
     # and build table rows: [path, url, comment]
-    rows = repositories.sort_by {|repository, _| repository.rel_path }.map do |repository, tags|
+    rows = repositories.sort_by { |repository, _| repository.rel_path }.map do |repository, tags|
       path, url = repository.to_hash.values
       url = "-" if url.nil? || url.empty?
       comment = tags.include?(:fs) && tags.include?(:toc) ? "" : {fs: "not in GiTOC", toc: "not on filesystem"}[tags.first]
@@ -39,7 +39,7 @@ class Gitoc::Cli < Thor
       [path, url, comment]
     end
 
-    print_table rows  
+    print_table rows
   end
 
   desc "generate", "Recursively scan base for git repositories and generate/update GiTOC file"
@@ -136,7 +136,7 @@ class Gitoc::Cli < Thor
       yield repo
     end
   end
-      
+
   def home
     @home ||= Pathname.new(ENV["HOME"])
   end
